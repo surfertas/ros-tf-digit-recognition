@@ -8,16 +8,29 @@ from cv_bridge import CvBridge, CvBridgeError
 class Camera(object):
 
     
-    def __init__(self):
+    def __init__(self, port):
+        self._BRIDGE = CvBridge()
+        self._CAMERA_PORT = port
+        self._CAMERA = cv2.VideoCapture(self._CAMERA_PORT)
+        self._RAMP = 20
+
         rospy.init_node('camera_feed')
         self.image_pub = rospy.Publisher('image_raw', Image, queue_size=1)
+        
+    def _ramp_up(self):
+        temp = [self._CAMERA.read() for _ in xrange(self._RAMP)]
 
     def run(self):
         rate = rospy.Rate(10)
+        self._ramp_up()
 
         try:
             while not rospy.is_shutdown():
-                #self.image_pub.publish(None)
+                _, cv_image = self._CAMERA.read()
+                image_msg = self._BRIDGE.cv2_to_imgmsg(cv_image, 
+                                                       encoding="passthrough")
+
+                self.image_pub.publish(image_msg)
                 rate.sleep()
 
         except rospy.ROSInterruptException:
@@ -25,9 +38,7 @@ class Camera(object):
 
 
 if __name__=='__main__':
-    node = Camera()
+    port = 0
+    node = Camera(port)
     node.run()
-
-
-
 
