@@ -15,7 +15,7 @@ class Camera(object):
         self._RAMP = 20
 
         rospy.init_node('camera_feed')
-        self.image_pub = rospy.Publisher('image_raw', Image, queue_size=1)
+        self._image_pub = rospy.Publisher('image_raw', Image, queue_size=1)
         
     def _ramp_up(self):
         temp = [self._CAMERA.read() for _ in xrange(self._RAMP)]
@@ -30,7 +30,7 @@ class Camera(object):
                 image_msg = self._BRIDGE.cv2_to_imgmsg(cv_image, 
                                                        encoding="passthrough")
 
-                self.image_pub.publish(image_msg)
+                self._image_pub.publish(image_msg)
                 rate.sleep()
 
         except rospy.ROSInterruptException:
