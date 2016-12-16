@@ -17,6 +17,19 @@ class ImageProcessor(object):
         self._image_pub = rospy.Publisher('image_processed', Image, queue_size=1)
 
     def _add_padding(self, x, y, w, h, shape):
+        """ Adds padding around the roi.
+
+        Args:
+            x:  x-axis coordinate
+            y:  y-axis coordinate
+            w:  width of roi
+            h:  heigth of roi
+            shape: shape of image, used for boundaries
+
+        Returs:
+            x1,x2,y1,y2:    coordinates of padded roi
+            
+        """
         x_max, y_max, _ = shape
 
         x1 = x * 0.75
@@ -67,9 +80,11 @@ class ImageProcessor(object):
             x1,x2,y1,y2 = self._add_padding(x, y, w, h, cv_img.shape)
 
             roi = thresh_img[y1:y2, x1:x2]
-            #TODO: flip binary, so comparable to data set. 
 
             roi = cv2.resize(roi,(28,28))
+
+            #invert image, consistent with training data
+            roi = np.abs(roi/255. - 1.) * 255
             
         cv2.imshow("Image", roi)
         cv2.waitKey(3)
