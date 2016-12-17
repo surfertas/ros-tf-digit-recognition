@@ -32,10 +32,10 @@ class ImageProcessor(object):
         """
         x_max, y_max, _ = shape
 
-        x1 = x * 0.75
-        x2 = min(int((x + w) * 1.25), x_max)
-        y1 = y * 0.75
-        y2 = min(int((y + h) * 1.25), y_max)
+        x1 = x * 0.8
+        x2 = min(int((x + w) * 1.2), x_max)
+        y1 = y * 0.8
+        y2 = min(int((y + h) * 1.2), y_max)
         
         return x1, x2, y1, y2
 
@@ -65,7 +65,7 @@ class ImageProcessor(object):
                                 cv2.CHAIN_APPROX_SIMPLE)
 
         #bounding rectangles with condition to filter false hits
-        bounded = [cv2.boundingRect(ctr) for ctr in ctrs 
+        bounded = [cv2.boundingRect(ctr) for ctr in ctrs
                    if cv2.contourArea(ctr) > 200]
 
 
@@ -81,14 +81,11 @@ class ImageProcessor(object):
 
             roi = thresh_img[y1:y2, x1:x2]
 
-            roi = cv2.resize(roi,(28,28))
-
-            #invert image, consistent with training data
-            roi = np.abs(roi/255. - 1.) * 255
+            roi = cv2.resize(roi,(28,28)) / 255.
             
-        cv2.imshow("Image", roi)
+        cv2.imshow("Image", cv_img)
         cv2.waitKey(3)
-        
+
         img_msg = self._BRIDGE.cv2_to_imgmsg(roi, encoding="passthrough")
         self._image_pub.publish(img_msg)
 
