@@ -17,7 +17,7 @@ class DigitClassifier(object):
     def __init__(self):                
         self._BRIDGE = CvBridge()
 
-        rospy.init_node('digit_classifer')
+        rospy.init_node('digit_classifier')
         self._image_sub = rospy.Subscriber('/image_processed', Image, self._classify_cb)
         
         self._model = joblib.load(MODEL_FILE_PATH)
@@ -32,8 +32,8 @@ class DigitClassifier(object):
 
         
         #un-hash to see image
-        #cv2.imshow("Image", cv_img)
-        #cv2.waitKey(3)
+        cv2.imshow("Image", cv_img)
+        cv2.waitKey(3)
 
         img = np.reshape(cv_img, (1,784))
 

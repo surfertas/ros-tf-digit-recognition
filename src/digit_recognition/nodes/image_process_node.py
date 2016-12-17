@@ -82,12 +82,14 @@ class ImageProcessor(object):
             roi = thresh_img[y1:y2, x1:x2]
 
             roi = cv2.resize(roi,(28,28)) / 255.
-            
-        cv2.imshow("Image", cv_img)
-        cv2.waitKey(3)
 
-        img_msg = self._BRIDGE.cv2_to_imgmsg(roi, encoding="passthrough")
-        self._image_pub.publish(img_msg)
+            img_msg = self._BRIDGE.cv2_to_imgmsg(roi, encoding="passthrough")
+            self._image_pub.publish(img_msg)
+
+            
+        #cv2.imshow("Image", cv_img)
+        #cv2.waitKey(3)
+
 
     def run(self):
         try:
