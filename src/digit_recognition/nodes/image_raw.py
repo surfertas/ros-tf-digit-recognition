@@ -26,12 +26,15 @@ class Camera(object):
 
         try:
             while not rospy.is_shutdown():
-                _, cv_image = self._CAMERA.read()
-                image_msg = self._BRIDGE.cv2_to_imgmsg(cv_image, 
-                                                       encoding="passthrough")
+                
+                test, cv_image = self._CAMERA.read()
 
-                self._image_pub.publish(image_msg)
-                rate.sleep()
+                if test:
+                    image_msg = self._BRIDGE.cv2_to_imgmsg(cv_image, 
+                                                       encoding="8UC3")
+                
+                    self._image_pub.publish(image_msg)
+                    rate.sleep()
 
         except rospy.ROSInterruptException:
             pass    

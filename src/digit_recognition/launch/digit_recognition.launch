@@ -1,0 +1,11 @@
+<?xml version="1.0"?>
+
+<!--
+\file   digit_recognition.launch
+-->
+
+<launch>
+    <node name="camera_feed" pkg="digit_recognition" type="image_raw.py" respawn="true"/>
+    <node name="image_processor" pkg="digit_recognition" type="image_process_node.py" respawn="true"/>
+    <node name="digit_classifier" pkg="digit_recognition" type="tf_digit_classifier.py" respawn="true" output="screen"/>
+</launch>

@@ -30,24 +30,38 @@ class ImageProcessor(object):
             x1,x2,y1,y2:    coordinates of padded roi
             
         """
-        x_max, y_max, _ = shape
+        y_max, x_max, _ = shape
 
-        x1 = x * 0.8
-        x2 = min(int((x + w) * 1.2), x_max)
-        y1 = y * 0.8
-        y2 = min(int((y + h) * 1.2), y_max)
-        
+        x1 = x * 0.75
+        x2 = min(int((x + w) * 1.25), x_max)
+        y1 = y * 0.75
+        y2 = min(int((y + h) * 1.25), y_max)
         return x1, x2, y1, y2
 
+    def _preprocess(self, image):
+        w, h = float(image.size)
+        
+        if w > h: 
+            h_ = int(round((20./w*h),0))
+            if (h_ == 0):
+                h_ = 1
+        img = image.resize((20, h_), interpolation=cv2.INTER_AREA)
+        wtop = int(round(((28 - h_)/2),0))
+        img = cv2.copyMakeBorder(img, 4,4,4,4,cv2.BORDER_CONSTANT, value=WHITE)
+
+        #https://niektemme.com/2016/02/21/tensorflow-handwriting/
+
     def _image_process_cb(self, image):
+
         try:
             cv_img = self._BRIDGE.imgmsg_to_cv2(image, "8UC3")
-
+                
         except CvBridgeError as e:
-            print(e)
+            #print(e)
+            return 
 
         #convert to gray image, and blur
-        gray_img = cv2.cvtColor(cv_img, cv2.COLOR_BGR2GRAY) 
+        gray_img = cv2.cvtColor(cv_img, cv2.COLOR_RGB2GRAY) 
         blur_img = cv2.GaussianBlur(gray_img, (3,3), 0)
 
 
@@ -66,7 +80,7 @@ class ImageProcessor(object):
 
         #bounding rectangles with condition to filter false hits
         bounded = [cv2.boundingRect(ctr) for ctr in ctrs
-                   if cv2.contourArea(ctr) > 200]
+                   if cv2.contourArea(ctr) > 300]
 
 
         for rect in bounded:
@@ -80,15 +94,15 @@ class ImageProcessor(object):
             x1,x2,y1,y2 = self._add_padding(x, y, w, h, cv_img.shape)
 
             roi = thresh_img[y1:y2, x1:x2]
-
-            roi = cv2.resize(roi,(28,28)) / 255.
+            w,h =roi.shape
+            roi = cv2.resize(roi,(28,28), interpolation=cv2.INTER_AREA) / 255.
 
             img_msg = self._BRIDGE.cv2_to_imgmsg(roi, encoding="passthrough")
             self._image_pub.publish(img_msg)
 
             
-        #cv2.imshow("Image", cv_img)
-        #cv2.waitKey(3)
+        cv2.imshow("Image", roi)
+        cv2.waitKey(3)
 
 
     def run(self):
