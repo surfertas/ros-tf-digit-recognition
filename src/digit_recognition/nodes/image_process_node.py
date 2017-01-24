@@ -49,8 +49,6 @@ class ImageProcessor(object):
         wtop = int(round(((28 - h_)/2),0))
         img = cv2.copyMakeBorder(img, 4,4,4,4,cv2.BORDER_CONSTANT, value=WHITE)
 
-        #https://niektemme.com/2016/02/21/tensorflow-handwriting/
-
     def _image_process_cb(self, image):
 
         try:
@@ -82,7 +80,6 @@ class ImageProcessor(object):
         bounded = [cv2.boundingRect(ctr) for ctr in ctrs
                    if cv2.contourArea(ctr) > 300]
 
-
         for rect in bounded:
 
             x,y,w,h = rect
@@ -99,11 +96,9 @@ class ImageProcessor(object):
 
             img_msg = self._BRIDGE.cv2_to_imgmsg(roi, encoding="passthrough")
             self._image_pub.publish(img_msg)
-
             
         cv2.imshow("Image", roi)
         cv2.waitKey(3)
-
 
     def run(self):
         try:

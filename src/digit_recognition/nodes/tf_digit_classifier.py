@@ -43,7 +43,6 @@ class DigitClassifier(object):
         #start session
         self._sess = tf.Session(graph=self._graph)
 
-
     def _load_graph(self, frozen_graph_filename):
         
         ros_path = self._rospack.get_path('digit_recognition')
@@ -64,7 +63,6 @@ class DigitClassifier(object):
             )
         return graph
 
-
     def _classify_cb(self, image):
         try:
             cv_img = self._BRIDGE.imgmsg_to_cv2(image)
@@ -72,7 +70,6 @@ class DigitClassifier(object):
         except CvBridgeError as e:
             print(e)
 
-        
         #un-hash to see image
         cv2.imshow("Image", cv_img)
         cv2.waitKey(3)
@@ -81,14 +78,12 @@ class DigitClassifier(object):
         img[img<0.05] = 0
         predict = self._sess.run(self.output, 
                                  feed_dict={self.x: img, self.keep_prob:1.0})
-
               
         if len(self._digits) > 100 and self._digits:
             self._digits.popleft()
           
         self._digits.append(np.argmax(predict,1)[0])
         print(np.argmax(np.bincount(self._digits)))
-
 
     def run(self):
         try:
