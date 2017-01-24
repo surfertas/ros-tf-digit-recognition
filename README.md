@@ -1,5 +1,5 @@
-# Tokyo ROS 
+# ROS + Tensorflow + OpenCV 
 
-##task0001
+##Digit Recognition
 
-Digit recognition and display using ROS+openCV
+Digit recognition: trained on MNIST data
