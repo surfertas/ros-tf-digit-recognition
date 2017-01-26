@@ -19,7 +19,7 @@ uses ROS node system to interlink the jobs, generally broken down by:
 
 The associated graph is as follows:
 
-![]()
+![](https://github.com/liana1215/ros-tf-digit-recognition/blob/master/rosgraph.png)
 
 A couple areas that caused setbacks, were filtering for false hits and freezing
 the inference model and reloading for reuse. 
@@ -40,10 +40,10 @@ reloading the model in a separate node.
 There may be a more efficient way of implementing, but at the moment the
 solution was to be sensitive to the namespaces of the tensors.
 
-In the digit_classifier node, the tensors related to the graph that was going to
+In the digit_classifier node [tf_digit_classifier.py], the tensors related to the graph that was going to
 be used needed to be "loaded".
 
-```tf_digit_classifier.py
+```python
 #model file
 self._model = "nodes/tf_model/frozen_model.pb"
 
